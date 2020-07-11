@@ -6,6 +6,8 @@ import {
   UsePipes,
   BadRequestException,
   Get,
+  Param,
+  NotFoundException,
 } from '@nestjs/common';
 import { AccountService } from './account.service';
 import { TransactionBodyDto } from './transactionBody.dto';
@@ -18,6 +20,13 @@ export class TransactionController {
   @Get()
   async getBalance() {
     return this.accountService.getBalance();
+  }
+
+  @Get(':uuid')
+  async getTransaction(@Param('uuid') uuid) {
+    const transaction = this.accountService.getOne(uuid);
+    if (!transaction) throw new NotFoundException('transaction not found');
+    return transaction;
   }
 
   @Post()

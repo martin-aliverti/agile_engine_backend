@@ -16,6 +16,9 @@ export class AccountService extends InMemoryDBService<TransactionEntity> {
     return super.create(transaction);
   };
 
+  getOne = (uuid: string) =>
+    super.query(transaction => transaction.uuid === uuid)[0];
+
   getBalance = () =>
     super.getAll().reduce((accu, transaction) => {
       const adjustment = transaction.type === CREDIT ? 1 : -1;
