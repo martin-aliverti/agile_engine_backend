@@ -19,7 +19,7 @@ export class TransactionController {
 
   @Get()
   async getBalance() {
-    return this.accountService.getBalance();
+    return this.accountService.getAll();
   }
 
   @Get(':uuid')
