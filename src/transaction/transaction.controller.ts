@@ -9,7 +9,7 @@ import {
   Param,
   NotFoundException,
 } from '@nestjs/common';
-import { AccountService } from './account.service';
+import { AccountService, types } from './account.service';
 import { TransactionBodyDto } from './transactionBody.dto';
 import { TransactionDto } from './transaction.dto';
 
@@ -41,7 +41,10 @@ export class TransactionController {
       throw new BadRequestException(
         'Transaction amount must be greater than 0',
       );
-    // const currentBalance = await this.accountService.getBalance();
-    // if currentBalance (+-) amount < 0 return 400
+    if (body.type === types.DEBIT) {
+      const currentBalance = this.accountService.getBalance();
+      if (currentBalance < body.amount)
+        throw new BadRequestException('Invalid transaction amount');
+    }
   };
 }

@@ -4,8 +4,10 @@ import { TransactionDto } from './transaction.dto';
 import { InMemoryDBService } from '@nestjs-addons/in-memory-db';
 import { TransactionEntity } from './transaction.entity';
 
-const CREDIT = 'credit';
-const DEBIT = 'debit';
+export const types = {
+  CREDIT: 'credit',
+  DEBIT: 'debit',
+};
 
 export class AccountService extends InMemoryDBService<TransactionEntity> {
   doCreate = (data: TransactionBodyDto) => {
@@ -22,7 +24,7 @@ export class AccountService extends InMemoryDBService<TransactionEntity> {
 
   getBalance = () =>
     super.getAll().reduce((accu, transaction) => {
-      const adjustment = transaction.type === CREDIT ? 1 : -1;
+      const adjustment = transaction.type === types.CREDIT ? 1 : -1;
       return accu + adjustment * transaction.amount;
     }, 0);
 }
