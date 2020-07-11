@@ -5,23 +5,34 @@ import {
   ValidationPipe,
   UsePipes,
   BadRequestException,
+  Get,
 } from '@nestjs/common';
-import { TransactionService } from './transaction.service';
+import { AccountService } from './account.service';
 import { TransactionBodyDto } from './transactionBody.dto';
 import { TransactionDto } from './transaction.dto';
 
 @Controller('transactions')
 export class TransactionController {
-  constructor(private readonly transactionService: TransactionService) {}
+  constructor(private readonly accountService: AccountService) {}
+
+  @Get()
+  async getBalance() {
+    return this.accountService.getBalance();
+  }
 
   @Post()
   @UsePipes(ValidationPipe)
-  async create(
-    @Body() transactionBody: TransactionBodyDto,
-  ): Promise<TransactionDto> {
-    if (transactionBody.amount <= 0) throw new BadRequestException();
-    // TODO: check if transaction would result in negative
-
-    return this.transactionService.create(transactionBody);
+  async create(@Body() body: TransactionBodyDto): Promise<TransactionDto> {
+    this.validate(body);
+    return this.accountService.doCreate(body);
   }
+
+  validate = (body: TransactionBodyDto) => {
+    if (body.amount <= 0)
+      throw new BadRequestException(
+        'Transaction amount must be greater than 0',
+      );
+    // const currentBalance = await this.accountService.getBalance();
+    // if currentBalance (+-) amount < 0 return 400
+  };
 }
